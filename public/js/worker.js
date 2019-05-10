@@ -1,4 +1,5 @@
 onmessage = (res) =>{
   console.log(res)
+  postMessage('i am not fine')
   postMessage('i am fine')
 }
