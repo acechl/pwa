@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name='apple-mobile-web-app-capable' content='yes'>
+    <meta name='apple-mobile-web-app-status-bar-style' content='default'>
+    <meta name='apple-mobile-web-app-title ' content='图书搜索1'>
+    <meta name="application-name" content="图书搜索1" />
+    <meta name="msapplication-TileColor" content="#222">
+    <meta name="msapplication-square70x70logo" content=".../img/icons/book-72.png" />
+    <meta name="msapplication-square150x150logo" content="../img/icons/book-144.png" />
+    <meta name="msapplication-square310x310logo" content="../img/icons/book-256.png" />
+    <link rel='apple-touch-icon' href='../img/icons/book-256.png'>
+    <title>my first pwa</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="manifest" href="../manifest.json">
+    <link rel='stylesheet' href='../css/common.css'>
+    <link rel='stylesheet' href='../css/styles.css'>
+  </head>
+  <body>
+    <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+    <div id='click'>my-first-pwa</div>
+    <div id='inner'>shide</div>
+    <div class='inner1'>inner</div>
+    <div class='inner2'>inner</div>
+    <div class='inner3'>inner</div>
+    <div class='inner4'>inner</div>
+    <div class='inner5'>inner</div>
+    <div class='inner6'>inner</div>
+    <div class='inner7'>inner</div>
+    <div class='inner8'>inner</div>
+    <div class='inner9'>inner</div>
+    <!-- <script src="../js/common.js" async defer></script> -->
+    <script src='../js/jquery.min.js'></script>
+    <script>
+      let getData = function () {
+        return new Promise((resolve,reject)=>{
+          fetch('https://api.douban.com/v2/movie/in_theaters', {method: 'post', mode: 'no-cors', headers: {'Access-Control-Allow-Origin': '*'}}).then(response => {
+            let fetch = localStorage.getItem('fetch') || 0
+            if(fetch) {
+              resolve({json: 'one',cors: 'two'})
+            }else {
+              localStorage.setItem('fetch', 1)
+              resolve({json: '1', cors: '2'})
+            }
+          })
+        })
+      }
+     let cacheOrApi = function (url) {
+       if('caches' in window) { //支持cache
+        console.log('inne')
+        return caches.match(url).then(cache=>{
+          console.log('cache1', cache)
+          if(!cache) return
+          return cache
+        })
+       }else { //不支持cache
+          return Promise.resolve()
+        }
+     }
+     let fetchApi = () => {
+       let remotePromise = cacheOrApi('https://api.douban.com/v2/movie/in_theaters')
+       let chacheData
+       cacheOrApi('https://api.douban.com/v2/movie/in_theaters').then(data=>{
+         if(data) {
+           console.log('one')
+           cacheData = data || []
+           console.log('cacheData', cacheData)
+           return remotePromise
+         }
+       }).then(data => {
+         console.log('thendata', data)
+       })
+     }
+       if('serviceWorker' in navigator) {
+        //  console.log(navigator.serviceWorker.controller)
+        navigator.serviceWorker.register('../sw3.js?v=' + Date.now()).then((registration)=>{ //sw一般放在根目录下  service-worker会获取这个域下的所有fetch事件
+          // const applicationServerPublicKey = "BBlY_5OeDkp2zl_Hx9jFxymKyK4kQKZdzoCoe0L5RqpiV2eK0t4zx-d3JPHlISZ0P1nQdSZsxuA5SRlDB0MZWLw";
+          // const applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey);
+          // registration.pushManager.subscribe({userVisibleOnly: true,applicationServerKey}).then(r=>{
+          // console.log('==============', r)
+        // })
+          // console.log('service-worker注册成功')
+          // console.log(caches.keys(),'onetwo')
+        // let sw = null,state
+        //   if(registration.installing) {
+        //     sw = registration.installing
+        //     state = 'installing'
+        //   }else if(registration.waiting) {
+        //     sw = registration.waiting
+        //     state = 'waiting'
+        //   }else if(registration.active){
+        //     sw = registration.active
+        //     state = 'activated'
+        //   }else if(registration.activating) {
+        //     sw = registration.activating
+        //     state = 'activating'
+        //   }
+          // state && console.log(`sw-one state is ${state}`)
+          // if(sw) {
+          // sw.onstatechange = function () {
+            // console.log(`sw-two state is ${sw.state}`)
+          // }
+        // }
+        getData().then(data=>{
+          console.log('getData', data)
+        })
+        // cacheOrApi().then(data=>{
+        //   console.log('cache', data)
+        // })
+        fetchApi()
+      })  
+      }else {
+        console.log('service-worker注册失败')
+      }
+      navigator.serviceWorker.ready.then((registration)=>{
+        // 在浏览器中触发同步sync事件
+        let tag = 'sample_sync'
+        let tag1 = 'sample_1'
+        document.getElementById('click').addEventListener('click',()=>{
+          registration.sync.register(tag).then(r=>{
+            console.log('触发sync事件成功')
+          })
+          console.log(registration.sync.getTags())
+        })
+        document.getElementById('inner').addEventListener('click',()=>{
+          registration.sync.register(tag1).then(r=>{
+            console.log('触发sync事件成功--inner')
+          })
+          console.log(registration.sync.getTags())
+        })
+      })
+    </script>
+  </body>
+</html>

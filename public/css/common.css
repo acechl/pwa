@@ -1,0 +1,44 @@
+div {
+  color: red;
+  font-size: 20px;
+  
+}
+.inner1 {
+  font-weight: 100;
+  font-stretch: ultra-condensed;
+  
+}
+.inner2 {
+  font-weight: 200;
+  font-stretch: extra-condensed;
+  font-style: normal;
+}
+.inner3 {
+  font-weight: 300;
+  font-stretch: condensed;
+  font-size: italic;
+}
+.inner4 {
+  font-weight: 400;
+  font-stretch: semi-condensed;
+  font-style: oblique;
+}
+.inner5 {
+  font-weight: 500;
+  font-stretch: normal;
+}
+.inner6 {
+  font-weight: 600;
+  font-stretch: expanded;
+}
+.inner7 {
+  font-weight: 700;
+  font-stretch: extra-expanded;
+}
+.inner8 {
+  font-weight: 800;
+  font-stretch: ultra-expanded;
+}
+.inner9 {
+  font-weight: 900;
+}
